@@ -1,7 +1,13 @@
 from bs4 import BeautifulSoup
 import requests
-
+import pandas as pd
 url = "https://boston.craigslist.org/search/sof"
+#create dictionary
+d = {'key' : 'value'}
+#update dictionary
+d['new_key'] = 'new_value'
+
+npo_jobs = {}
 jobs_number = 0 
 
 while True:
@@ -32,7 +38,11 @@ while True:
         job_attribute_tag = job_soup.find('p',{'class':'attrgroup'})
         job_attribute = job_attribute_tag.text if job_attribute_tag else 'N/A'
         jobs_number+=1
-        print('Job Title:',title, '\n Location',location,'\ndate',date,'\nlink',link, '\njob_description',job_description, '\njob_attribute',job_attribute, '\n---')
+        npo_jobs:[jobs_number] + [title, location, date, link, job_attribute, job_description
+        
+
+        ]
+       # print('Job Title:',title, '\n Location',location,'\ndate',date,'\nlink',link, '\njob_description',job_description, '\njob_attribute',job_attribute, '\n---')
     url_tag = soup.find('a',{'title':'next page'})
     if url_tag.get('href'):
         url = 'https://boston.craigslist.org' + url_tag.get('href')
@@ -40,3 +50,6 @@ while True:
     else:
         break
 print("Total Jobs:",jobs_number)
+npo_jobs_df = pd.DataFrame.from_dict(npo_jobs, orient = 'index', coloumns = ['Job Title', 'Location', 'Date', 'Link', 'Job Attribute', 'Job Description'])
+npo_jobs_df.head()
+npo_jobs_df.to_csv('npo_jobs')
